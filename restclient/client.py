@@ -5,12 +5,15 @@ import structlog
 import curlify
 from requests import session, JSONDecodeError
 
+from restclient.configuratiton import Configuration
+
 
 class RestClient:
 
-    def __init__(self, host: str, headers=None):
-        self.host = host
-        self.headers = headers
+    def __init__(self, configuration: Configuration):
+        self.host = configuration.host
+        self.headers = configuration.headers
+        self.disable_log = configuration.disable_log
         self.session = session()
         # Инициализация лога
         self.log = structlog.get_logger(__name__).bind(service='api')
@@ -36,6 +39,10 @@ class RestClient:
 
         full_url = self.host + path
 
+        if self.disable_log:
+            rest_response = self.session.request(method=method, url=full_url, **kwargs)
+            return rest_response
+
         # Вывод лога запроса
         log.msg(
             event='Request',
@@ -60,6 +67,7 @@ class RestClient:
         )
         return rest_response
 
+    # Проверить наличие json в ответе, иначе возвращать {}
     @staticmethod
     def _get_json(rest_response):
         try:
