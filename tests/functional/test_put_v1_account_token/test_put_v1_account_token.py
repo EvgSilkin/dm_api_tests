@@ -10,7 +10,7 @@ def test_put_v1_account_token():
     account_api = AccountApi(host='http://5.63.153.31:5051')
     mailhog_api = MailhogApi(host='http://5.63.153.31:5025')
 
-    login = 'activate_evg_user_12'
+    login = 'activate_evg_user_13'
     password = '123456789'
     email = f'{login}@mail.com'
     json_data = {
@@ -42,10 +42,13 @@ def test_put_v1_account_token():
 
 def get_activation_token_by_login(login, response):
     token = None
-    pprint(response.json())
-    for item in response.json()['items']:
-        user_data = loads(item['Content']['Body'])
-        user_login = user_data['Login']
+
+    for item in response.json().get('items'):
+        user_data = loads(item.get('Content').get('Body'))
+        pprint(user_data)
+        user_login = user_data.get('Login')
+        pprint(user_login)
         if user_login == login:
-            token = user_data['ConfirmationLinkUrl'].split('/')[-1]
+            pprint(user_data.get('ConfirmationLinkUrl'))
+            token = user_data.get('ConfirmationLinkUrl').split('/')[-1]
     return token
