@@ -1,4 +1,5 @@
 from json import loads
+from pprint import pprint
 
 from dm_api_account.apis.account_api import AccountApi
 from dm_api_account.apis.ligon_api import LoginApi
@@ -7,10 +8,9 @@ from api_mailhog.apis.mailhog_api import MailhogApi
 
 def test_put_v1_account_token():
     account_api = AccountApi(host='http://5.63.153.31:5051')
-    login_api = LoginApi(host='http://5.63.153.31:5051')
     mailhog_api = MailhogApi(host='http://5.63.153.31:5025')
 
-    login = 'activate_evg_user_03'
+    login = 'activate_evg_user_05'
     password = '123456789'
     email = f'{login}@mail.com'
     json_data = {
@@ -42,6 +42,7 @@ def test_put_v1_account_token():
 
 def get_activation_token_by_login(login, response):
     token = None
+    pprint(response.json())
     for item in response.json()['items']:
         user_data = loads(item['Content']['Body'])
         user_login = user_data['Login']
