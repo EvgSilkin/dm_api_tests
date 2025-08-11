@@ -1,6 +1,8 @@
 import uuid
+from pprint import pprint
 
 import structlog
+import curlify
 from requests import session, JSONDecodeError
 
 
@@ -47,7 +49,8 @@ class RestClient:
 
         # Выполнить запрос
         rest_response = self.session.request(method=method, url=full_url, **kwargs)
-
+        curl = curlify.to_curl(rest_response.request)
+        pprint(curl)
         # Вывод лога ответа
         log.msg(
             event='Response',
