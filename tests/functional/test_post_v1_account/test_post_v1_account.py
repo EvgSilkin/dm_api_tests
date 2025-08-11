@@ -10,7 +10,7 @@ def test_post_v1_account():
     login_api = LoginApi(host='http://5.63.153.31:5051')
     mailhog_api = MailhogApi(host='http://5.63.153.31:5025')
 
-    login = 'create_evg_user_04'
+    login = 'create_evg_user_05'
     password = '123456789'
     email = f'{login}@mail.com'
     json_data = {
