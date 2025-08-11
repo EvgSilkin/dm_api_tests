@@ -22,7 +22,7 @@ def test_put_v1_account_token():
     account_api = AccountApi(configuration=account_api_configuration)
     mailhog_api = MailhogApi(configuration=mailhog_configuration)
 
-    login = 'activate_evg_user_13'
+    login = 'activate_evg_user_14'
     password = '123456789'
     email = f'{login}@mail.com'
     json_data = {

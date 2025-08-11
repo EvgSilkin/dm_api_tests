@@ -26,7 +26,7 @@ def test_post_v1_account_login():
     login_api = LoginApi(configuration=login_api_configuration)
     mailhog_api = MailhogApi(configuration=mailhog_configuration)
 
-    login = 'auth_evg_user_12'
+    login = 'auth_evg_user_13'
     password = '123456789'
     email = f'{login}@mail.com'
     json_data = {
