@@ -1,17 +1,31 @@
 from json import loads
 from pprint import pprint
 
-from dm_api_account.apis.account_api import AccountApi
-from dm_api_account.apis.ligon_api import LoginApi
-from api_mailhog.apis.mailhog_api import MailhogApi
+import structlog
 
+from dm_api_account.apis.account_api import AccountApi
+from dm_api_account.apis.login_api import LoginApi
+from api_mailhog.apis.mailhog_api import MailhogApi
+from restclient.configuratiton import Configuration as AccountApiConfiguration
+from restclient.configuratiton import Configuration as LoginApiConfiguration
+from restclient.configuratiton import Configuration as MailhogConfiguration
+
+structlog.configure(
+    processors=[
+        structlog.processors.JSONRenderer(indent=4, ensure_ascii=True, sort_keys=True)
+    ]
+)
 
 def test_post_v1_account_email():
-    account_api = AccountApi(host='http://5.63.153.31:5051')
-    login_api = LoginApi(host='http://5.63.153.31:5051')
-    mailhog_api = MailhogApi(host='http://5.63.153.31:5025')
+    account_api_configuration = AccountApiConfiguration(host='http://5.63.153.31:5051', disable_log=False)
+    login_api_configuration = LoginApiConfiguration(host='http://5.63.153.31:5051', disable_log=False)
+    mailhog_configuration = MailhogConfiguration(host='http://5.63.153.31:5025')
 
-    login = 'ch_mail_evg_user_16'
+    account_api = AccountApi(configuration=account_api_configuration)
+    login_api = LoginApi(configuration=login_api_configuration)
+    mailhog_api = MailhogApi(configuration=mailhog_configuration)
+
+    login = 'ch_mail_evg_user_18'
     password = '123456789'
     email = f'{login}@mail.com'
     json_data = {
@@ -22,23 +36,17 @@ def test_post_v1_account_email():
 
     # Регистрация пользователя
     response = account_api.post_v1_account(json_data=json_data)
-    print(response.status_code)
-    print(response.text)
     assert response.status_code == 201, f"Пользователь {login} не был создан"
 
     # Получение активационного токена
     response = mailhog_api.get_api_v2_messages(response)
-    print(response.status_code)
     assert response.status_code == 200, f"Письма не были получены {response.json()}"
 
     token = get_activation_token_by_login(login=login, response=response)
-    print(token)
     assert token is not None, f"Токен для пользователя {login} не был получен"
 
     # Активация пользователя
     response = account_api.put_v1_account_token(token=token)
-    print(response.status_code)
-    print(response.text)
     assert response.status_code == 200, f"Пользователь {login} не был активирован {response.json()}"
 
     # Авторизация
@@ -49,12 +57,10 @@ def test_post_v1_account_email():
     }
 
     response = login_api.post_v1_account_login(json_data=json_data)
-    print(response.status_code)
-    print(response.text)
     assert response.status_code == 200, f"Пользователь {login} не был авторизован {response.json()}"
 
     # Измениние email
-    new_mailbox = "new_mail_evg_16"
+    new_mailbox = "new_mail_evg_18"
     json_data = {
         "login": login,
         "password": password,
@@ -62,8 +68,6 @@ def test_post_v1_account_email():
     }
 
     response = account_api.put_v1_account_email(json_data=json_data)
-    print(response.status_code)
-    print(response.text)
     assert response.status_code == 200, f"Для пользователя {login} не был обновлен email {response.json()}"
 
     # Получение 403 при авторизации
@@ -74,24 +78,17 @@ def test_post_v1_account_email():
     }
 
     response = login_api.post_v1_account_login(json_data=json_data)
-    print(response.status_code)
-    print(response.text)
     assert response.status_code == 403, f"Пользователь {login} не получил ошибку 403 {response.json()}"
 
     # Получение нового активационного токена
     response = mailhog_api.get_api_v2_messages(response)
-    print(response.status_code)
-    print(response.json())
     assert response.status_code == 200, f"Письма не были получены {response.json()}"
 
     token = get_activation_token_by_mailbox(new_mailbox=new_mailbox, response=response)
-    print(token)
     assert token is not None, f"Токен для пользователя {login} не был получен"
 
     # Активация пользователя по новому email
     response = account_api.put_v1_account_token(token=token)
-    print(response.status_code)
-    print(response.text)
     assert response.status_code == 200, f"Пользователь {login} не был активирован {response.json()}"
 
     # Авторизация с новым email
@@ -102,8 +99,6 @@ def test_post_v1_account_email():
     }
 
     response = login_api.post_v1_account_login(json_data=json_data)
-    print(response.status_code)
-    print(response.text)
     assert response.status_code == 200, f"Пользователь {login} не был авторизован {response.json()}"
 
 
