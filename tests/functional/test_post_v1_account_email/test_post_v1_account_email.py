@@ -29,7 +29,7 @@ def test_post_v1_account_email():
     account_helper.register_new_user(login=login, password=password, email=email)
     account_helper.user_login(login=login, password=password, remember_me=True)
 
-    new_mailbox = "new_mail_evg_30"
+    new_mailbox = "new_mail_evg_31"
     account_helper.change_user_email(login=login, password=password, new_mailbox=new_mailbox, email_domain="mail.ru")
 
     # Получение 403 при авторизации

@@ -22,7 +22,7 @@ def test_put_v1_account_token():
 
     account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog)
 
-    login = 'activate_evg_user_23'
+    login = 'activate_evg_user_24'
     password = '123456789'
     email = f'{login}@mail.com'
 
