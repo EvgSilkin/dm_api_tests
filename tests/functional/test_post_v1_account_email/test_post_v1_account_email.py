@@ -35,7 +35,7 @@ def test_post_v1_account_email():
     # Получение 403 при авторизации
     response = account_helper.user_login(login=login, password=password, remember_me=True, expected_status_code=403)
 
-    token = account_helper.get_activate_token_by_mailbox(login=login, new_mailbox=new_mailbox, response=response)
+    token = account_helper.get_activate_token_by_mailbox(login=login, new_mailbox=new_mailbox)
     account_helper.activate_user(login=login, token=token)
     account_helper.user_login(login=login, password=password, remember_me=True)
 
