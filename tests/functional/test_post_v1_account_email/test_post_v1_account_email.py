@@ -22,7 +22,7 @@ def test_post_v1_account_email():
 
     account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog)
 
-    login = 'ch_mail_evg_user_36'
+    login = 'ch_mail_evg_user_37'
     password = '123456789'
     email = f'{login}@mail.com'
 
