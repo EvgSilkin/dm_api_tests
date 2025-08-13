@@ -22,7 +22,7 @@ def test_post_v1_account():
 
     account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog)
 
-    login = 'create_evg_user_45'
+    login = 'create_evg_user_46'
     password = '123456789'
     email = f'{login}@mail.com'
 
