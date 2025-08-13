@@ -59,7 +59,7 @@ class AccountHelper:
         assert token is not None, f"Токен для пользователя {login} не был получен"
         return token
 
-    def get_activate_token_by_mailbox(self, response: Response, login: str, new_mailbox: str):
+    def get_activate_token_by_mailbox(self, login: str, new_mailbox: str):
         response = self.mailhog.mailhog_api.get_api_v2_messages(response)
         assert response.status_code == 200, f"Письма не были получены {response.json()}"
 
