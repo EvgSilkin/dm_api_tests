@@ -22,14 +22,14 @@ def test_post_v1_account_email():
 
     account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog)
 
-    login = 'ch_mail_evg_user_41'
+    login = 'ch_mail_evg_user_42'
     password = '123456789'
     email = f'{login}@mail.com'
 
     account_helper.register_new_user(login=login, password=password, email=email)
     account_helper.user_login(login=login, password=password, remember_me=True)
 
-    new_mailbox = "new_mail_evg_41"
+    new_mailbox = "new_mail_evg_42"
     account_helper.change_user_email(login=login, password=password, new_mailbox=new_mailbox, email_domain="mail.ru")
 
     # Получение 403 при авторизации

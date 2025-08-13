@@ -1,8 +1,27 @@
+import time
 from json import loads
 from requests import Response
 
 from services.dm_api_account import DMApiAccount
 from services.api_mailhog import MailHogApi
+
+
+def retrier(retry_count: int, retry_delay: int):
+    def decorator(function):
+        def wrapper(*args, **kwargs):
+            token = None
+            current_count = 0
+            while token is None:
+                if current_count == retry_count:
+                    raise AssertionError("Превышено максимальное количество попыток запроса")
+                token = function(*args, **kwargs)
+                if token is not None:
+                    return token
+                current_count += 1
+                time.sleep(retry_delay)
+            return token
+        return wrapper
+    return decorator
 
 
 class AccountHelper:
@@ -56,6 +75,7 @@ class AccountHelper:
         assert response.status_code == 200, f"Пользователь {login} не был активирован {response.json()}"
         return response
 
+    @retrier(retry_count=5, retry_delay=1)
     def get_activation_token_by_login(self, login):
         token = None
         response = self.mailhog.mailhog_api.get_api_v2_messages()
@@ -68,6 +88,7 @@ class AccountHelper:
                 assert token is not None, f"Токен для пользователя {login} не был получен"
         return token
 
+    @retrier(retry_count=5, retry_delay=1)
     def get_activation_token_by_mailbox(self, new_mailbox):
         token = None
         response = self.mailhog.mailhog_api.get_api_v2_messages()
