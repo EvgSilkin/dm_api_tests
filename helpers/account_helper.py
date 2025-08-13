@@ -60,7 +60,7 @@ class AccountHelper:
         return token
 
     def get_activate_token_by_mailbox(self, login: str, new_mailbox: str):
-        response = self.mailhog.mailhog_api.get_api_v2_messages(response)
+        
         assert response.status_code == 200, f"Письма не были получены {response.json()}"
 
         token = self._get_activation_token_by_mailbox(new_mailbox=new_mailbox, response=response)
