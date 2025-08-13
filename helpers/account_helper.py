@@ -86,6 +86,7 @@ class AccountHelper:
     @staticmethod
     def _get_activation_token_by_mailbox(new_mailbox, response):
         token = None
+        response = self.mailhog.mailhog_api.get_api_v2_messages()
         for item in response.json()['items']:
             user_data = loads(item['Content']['Body'])
             user_mailbox = item['To'][0]['Mailbox']
