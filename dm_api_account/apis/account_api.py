@@ -14,11 +14,13 @@ class AccountApi(RestClient):
         response = self.post(path=f'/v1/account', json=json_data)
         return response
 
-    def get_v1_account(self, x_dm_auth_token: str | None, **kwargs):
-        headers = {
-            'X-Dm-Auth-Token': x_dm_auth_token,
-        }
-        response = self.get(path=f'/v1/account', headers=headers)
+    def get_v1_account(self, **kwargs):
+        """
+        Get current user
+        :param kwargs:
+        :return:
+        """
+        response = self.get(path=f'/v1/account', **kwargs)
         return response
 
     def put_v1_account_token(self, token: str | None, **kwargs):

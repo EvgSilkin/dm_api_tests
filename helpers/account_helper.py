@@ -1,5 +1,7 @@
 import time
 from json import loads
+from pprint import pprint
+
 from requests import Response
 
 from services.dm_api_account import DMApiAccount
@@ -20,7 +22,9 @@ def retrier(retry_count: int, retry_delay: int):
                 current_count += 1
                 time.sleep(retry_delay)
             return token
+
         return wrapper
+
     return decorator
 
 
@@ -29,6 +33,18 @@ class AccountHelper:
     def __init__(self, dm_account_api: DMApiAccount, mailhog: MailHogApi):
         self.dm_account_api = dm_account_api
         self.mailhog = mailhog
+
+    def auth_client(self, login: str, password: str):
+        response = self.dm_account_api.login_api.post_v1_account_login(
+            json_data={
+                "login": login,
+                "password": password
+            })
+        token = {
+            "x-dm-auth-token": response.headers["x-dm-auth-token"]
+        }
+        self.dm_account_api.account_api.set_headers(token)
+        self.dm_account_api.login_api.set_headers(token)
 
     def register_new_user(self, login: str, password: str, email: str):
         json_data = {
@@ -100,3 +116,44 @@ class AccountHelper:
                 token = user_data['ConfirmationLinkUrl'].split('/')[-1]
                 assert token is not None, f"Токен для mailbox {new_mailbox} не был получен"
         return token
+
+    @retrier(retry_count=5, retry_delay=1)
+    def get_reset_password_token_by_login(self, login):
+        token = None
+        response = self.mailhog.mailhog_api.get_api_v2_messages()
+        assert response.status_code == 200, f"Письма не были получены {response.json()}"
+        for item in response.json().get('items'):
+            user_data = loads(item.get('Content').get('Body'))
+            user_login = user_data.get('Login')
+            if user_login == login and user_data.get("ConfirmationLinkUri"):
+                token = user_data.get('ConfirmationLinkUri').split('/')[-1]
+                assert token is not None, f"Токен для изменение пароля пользователя {login} не был получен"
+
+        return token
+
+    def change_password(self, login: str, old_password: str, new_password: str):
+        self.auth_client(login=login, password=old_password)
+
+        json_data = {
+            "login": login,
+            "email": f"{login}@mail.com"
+        }
+        response = self.dm_account_api.account_api.post_v1_account_password(json_data=json_data)
+        assert response.status_code == 200, (f"Запрос для изменение пароля пользователя не был отправлен"
+                                             f" {response.json()}")
+        reset_password_token = self.get_reset_password_token_by_login(login=login)
+        json_data = {
+            "login": login,
+            "token": reset_password_token,
+            "oldPassword": old_password,
+            "newPassword": new_password
+        }
+        response = self.dm_account_api.account_api.put_v1_account_password(json_data=json_data)
+        assert response.status_code == 200, (f"Пароль не был обновлен {response.json()}")
+        response = self.user_login(login=login, password=new_password)
+        return response
+
+
+
+
+
