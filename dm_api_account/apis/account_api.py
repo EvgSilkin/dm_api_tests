@@ -18,15 +18,16 @@ class AccountApi(RestClient):
         # exclude_none=True - если поля необязательно и не заполнено, то его не передавать
         return response
 
-    def get_v1_account(self, **kwargs):
+    def get_v1_account(self, validate_response=True, **kwargs):
         """
         Get current user
+        :param validate_response:
         :param kwargs:
         :return:
         """
         response = self.get(path=f'/v1/account', **kwargs)
-        print(response.json())
-        UserDetailsEnvelope(**response.json())
+        if validate_response:
+            return UserDetailsEnvelope(**response.json())
         return response
 
     def put_v1_account_token(self, token: str | None, validate_response=True, **kwargs):
