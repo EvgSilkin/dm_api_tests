@@ -12,6 +12,8 @@ class AccountApi(RestClient):
     def post_v1_account(self, registration: Registration, **kwargs):
         """
         Register new user
+        :param registration:
+        :param kwargs:
         :return:
         """
         response = self.post(path=f'/v1/account', json=registration.model_dump(exclude_none=True, by_alias=True))

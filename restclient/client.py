@@ -69,6 +69,7 @@ class RestClient:
             header=rest_response.headers,
             json=self._get_json(rest_response)
         )
+        rest_response.raise_for_status()
         return rest_response
 
     # Проверить наличие json в ответе, иначе возвращать {}
