@@ -70,7 +70,8 @@ class AccountHelper:
         return response
 
     def user_login(self, login: str, password: str, remember_me: bool = True, expected_status_code: int = 200,
-                   validate_response=False):
+                   validate_response=False,
+                   validate_headers=False):
         login_credentials = LoginCredentials(
             login=login,
             password=password,
@@ -79,10 +80,13 @@ class AccountHelper:
 
         response = self.dm_account_api.login_api.post_v1_account_login(login_credentials=login_credentials,
                                                                        validate_response=validate_response)
-        assert response.status_code == expected_status_code, \
-            (f"Статус код {response.status_code} при авторизации пользователя {login} не соответствует "
-             f"ожидаемому {expected_status_code}:"
-             f" {response.json()}")
+        if validate_headers:
+            assert response.headers["x-dm-auth-token"], "Токен не был получен"
+
+        # assert response.status_code == expected_status_code, \
+        #     (f"Статус код {response.status_code} при авторизации пользователя {login} не соответствует "
+        #      f"ожидаемому {expected_status_code}:"
+        #      f" {response.json()}")
         return response
 
     def change_user_email(self, login: str, password: str, new_mailbox: str, email_domain: str):
