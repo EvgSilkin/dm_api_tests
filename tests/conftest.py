@@ -40,20 +40,25 @@ def account_helper(account_api, mailhog_api):
 @pytest.fixture(scope="session")
 def auth_account_helper(mailhog_api):
     dm_api_configuration = DmApiConfiguration(host='http://5.63.153.31:5051', disable_log=False)
+
     account = DMApiAccount(configuration=dm_api_configuration)
     account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog_api)
+
     account_helper.auth_client(login="create_evg_user_56", password="123456789123456789")
     return account_helper
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def auth_new_account_helper(mailhog_api, prepare_user_scope_session):
     dm_api_configuration = DmApiConfiguration(host='http://5.63.153.31:5051', disable_log=False)
+
     account = DMApiAccount(configuration=dm_api_configuration)
     account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog_api)
+
     login = prepare_user_scope_session.login
     password = prepare_user_scope_session.password
     email = prepare_user_scope_session.email
+
     account_helper.register_new_user(login=login, password=password, email=email)
     account_helper.auth_client(login=login, password=password)
     return account_helper
