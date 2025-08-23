@@ -42,11 +42,6 @@ class AccountHelper:
             password=password,
             remember_me=True
         )
-        # response = self.dm_account_api.login_api.post_v1_account_login(
-        #     json_data={
-        #         "login": login,
-        #         "password": password
-        #     })
         response = self.dm_account_api.login_api.post_v1_account_login(
             login_credentials=login_credentials, validate_response=False)
         token = {
@@ -61,8 +56,7 @@ class AccountHelper:
             password=password,
             email=email,
         )
-        response = self.dm_account_api.account_api.post_v1_account(registration=registration)
-        assert response.status_code == 201, f"Пользователь {login} не был создан"
+        self.dm_account_api.account_api.post_v1_account(registration=registration)
 
         token = self.get_activation_token_by_login(login=login)
         response = self.activate_user(login=login, token=token)
@@ -83,10 +77,6 @@ class AccountHelper:
         if validate_headers:
             assert response.headers["x-dm-auth-token"], "Токен не был получен"
 
-        # assert response.status_code == expected_status_code, \
-        #     (f"Статус код {response.status_code} при авторизации пользователя {login} не соответствует "
-        #      f"ожидаемому {expected_status_code}:"
-        #      f" {response.json()}")
         return response
 
     def change_user_email(self, login: str, password: str, new_mailbox: str, email_domain: str):
@@ -97,7 +87,6 @@ class AccountHelper:
         )
 
         response = self.dm_account_api.account_api.put_v1_account_email(change_email=change_email)
-        # assert response.status_code == 200, f"Для пользователя {login} не был обновлен email {response.json()}"
         return response
 
     def activate_user(self, login: str, token: str):
@@ -146,7 +135,8 @@ class AccountHelper:
         return token
 
     def change_password(self, login: str, old_password: str, new_password: str):
-        self.auth_client(login=login, password=old_password)
+        self.user_login(login=login, password=old_password)
+        # self.auth_client(login=login, password=old_password)
         reset_password = ResetPassword(
             login=login,
             email=f"{login}@mail.com",
