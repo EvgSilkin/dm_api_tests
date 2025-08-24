@@ -17,10 +17,6 @@ def test_post_v1_account(account_helper, prepare_user):
         response = account_helper.user_login(login=login, password=password, remember_me=True, validate_response=True)
         PostV1Account.check_response_values(response)
 
-
-
-
-
 @pytest.mark.parametrize(
     "login, email, password, expected_status_code",
     [
