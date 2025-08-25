@@ -1,8 +1,10 @@
 from collections import namedtuple
 from datetime import datetime
+from pathlib import Path
 
 import pytest
 import structlog
+from vyper import v
 
 from helpers.account_helper import AccountHelper
 from restclient.configuratiton import Configuration as DmApiConfiguration
@@ -15,6 +17,32 @@ structlog.configure(
         structlog.processors.JSONRenderer(indent=4, ensure_ascii=True, sort_keys=True)
     ]
 )
+
+options = (
+    "service.dm_api_account",
+    "service.mailhog",
+    "user.login",
+    "user.password"
+)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def set_config(request):
+    config = Path(__file__).joinpath("../../").joinpath("config")
+    config_name = request.config.getoption("--env")
+    v.set_config_name(config_name)
+    v.add_config_path(config)
+    v.read_in_config()
+    for option in options:
+        v.set(f"{option}", request.config.getoption(f"--{option}"))
+    yield
+
+
+def pytest_addoption(parser):
+    parser.addoption("--env", action="store", default="stg", help="run stg")
+
+    for option in options:
+        parser.addoption(f"--{option}", action="store", default="None")
 
 
 @pytest.fixture(scope="session")
