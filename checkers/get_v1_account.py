@@ -1,7 +1,9 @@
 from datetime import datetime
 
-from hamcrest import assert_that, has_property, starts_with, equal_to, not_none, has_properties, all_of
-from assertpy import assert_that, soft_assertions
+import assertpy
+import hamcrest
+from hamcrest import has_property, starts_with, equal_to, not_none, has_properties, all_of
+from assertpy import soft_assertions
 
 from dm_api_account.models.response_models.user_details_envelope import UserRole
 
@@ -9,8 +11,8 @@ from dm_api_account.models.response_models.user_details_envelope import UserRole
 class GetV1Account:
 
     @classmethod
-    def check_response_values(cls, response):
-        assert_that(response, all_of(
+    def check_response_values(cls, response, login):
+        hamcrest.assert_that(response, all_of(
             has_property("resource", has_property("login", starts_with("create_evg_user"))),
             has_property("resource", has_property("info", equal_to(""))),
             has_property("resource", has_property("online", not_none())),
@@ -43,6 +45,6 @@ class GetV1Account:
 
         ))
         with soft_assertions():
-            assert_that(response.resource.login).is_equal_to("create_evg_user_56")
-            assert_that(response.resource.online).is_instance_of(datetime)
-            assert_that(response.resource.roles).contains(UserRole.GUEST, UserRole.PLAYER)
+            assertpy.assert_that(response.resource.login).is_equal_to(login)
+            assertpy.assert_that(response.resource.online).is_instance_of(datetime)
+            assertpy.assert_that(response.resource.roles).contains(UserRole.GUEST, UserRole.PLAYER)
