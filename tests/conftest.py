@@ -18,42 +18,6 @@ structlog.configure(
     ]
 )
 
-options = (
-    "service.dm_api_account",
-    "service.mailhog",
-    "user.login",
-    "user.password"
-)
-
-
-@pytest.fixture(scope="session", autouse=True)
-def set_config(request):
-    config = Path(__file__).joinpath("../../").joinpath("config")
-    config_name = request.config.getoption("--env")
-    v.set_config_name(config_name)
-    v.add_config_path(config)
-    v.read_in_config()
-    for option in options:
-        v.set(f"{option}", request.config.getoption(f"--{option}"))
-        print(v.get("service.mailhog"))
-        print(v.get("service.dm_api_account"))
-        print(v.get("user.login"))
-        print(v.get("user.password"))
-    yield
-
-
-def pytest_addoption(parser):
-    parser.addoption("--env", action="store", default="stg", help="run stg")
-
-    for option in options:
-        parser.addoption(f"--{option}", action="store", default="None")
-
-
-def pytest_addoption(parser):
-    parser.addoption("--env", action="store", default="stg", help="run stg")
-    for option in options:
-        parser.addoption(f"--{option}", action="store", default=None)
-
 
 @pytest.fixture(scope="session")
 def mailhog_api():
