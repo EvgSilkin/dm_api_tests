@@ -1,3 +1,5 @@
+import allure
+
 from dm_api_account.models.request_models.change_email import ChangeEmail
 from dm_api_account.models.request_models.change_password import ChangePassword
 from dm_api_account.models.request_models.registration import Registration
@@ -9,6 +11,7 @@ from restclient.client import RestClient
 
 class AccountApi(RestClient):
 
+    @allure.step("Зарегистрировать нового пользователя")
     def post_v1_account(self, registration: Registration, **kwargs):
         """
         Register new user
@@ -20,6 +23,7 @@ class AccountApi(RestClient):
         # exclude_none=True - если поля необязательно и не заполнено, то его не передавать
         return response
 
+    @allure.step("Получить текущего пользователя")
     def get_v1_account(self, validate_response=True, **kwargs):
         """
         Get current user
@@ -28,10 +32,12 @@ class AccountApi(RestClient):
         :return:
         """
         response = self.get(path=f'/v1/account', **kwargs)
+        print(type(response))
         if validate_response:
             return UserDetailsEnvelope(**response.json())
         return response
 
+    @allure.step("Активировать зарегистрированного пользователя")
     def put_v1_account_token(self, token: str | None, validate_response=True, **kwargs):
         """
         Activate registered user
@@ -45,6 +51,7 @@ class AccountApi(RestClient):
             return UserEnvelope(**response.json())
         return response
 
+    @allure.step("Сбросить пароль пользователя")
     def post_v1_account_password(self, reset_password: ResetPassword, validate_response=True, **kwargs):
         """
         Reset registered user password
@@ -60,6 +67,7 @@ class AccountApi(RestClient):
             return UserEnvelope(**response.json())
         return response
 
+    @allure.step("Изменить пароль пользователя")
     def put_v1_account_password(self, change_password: ChangePassword, validate_response=True, **kwargs):
         """
         Change registered user password
@@ -73,6 +81,7 @@ class AccountApi(RestClient):
             return UserEnvelope(**response.json())
         return response
 
+    @allure.step("Изменить email пользователя")
     def put_v1_account_email(self, change_email: ChangeEmail, validate_response=True, **kwargs):
         """
         Change registered user email

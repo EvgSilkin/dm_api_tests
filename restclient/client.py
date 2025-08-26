@@ -6,6 +6,7 @@ import curlify
 from requests import session, JSONDecodeError
 
 from restclient.configuratiton import Configuration
+from restclient.utilities import allure_attach
 
 
 class RestClient:
@@ -37,6 +38,7 @@ class RestClient:
     def delete(self, path, **kwargs):
         return self._send_request(method='DELETE', path=path, **kwargs)
 
+    @allure_attach
     def _send_request(self, method: str, path: str, **kwargs):
         # Забиндить уникальный uuid для каждого лога
         log = self.log.bind(event_id=str(uuid.uuid4()))

@@ -26,6 +26,8 @@ share/python-wheels/
 *.egg
 MANIFEST
 .idea/
+allure-results/
+allure-resport/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
