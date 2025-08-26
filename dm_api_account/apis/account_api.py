@@ -10,7 +10,6 @@ from restclient.client import RestClient
 
 
 class AccountApi(RestClient):
-
     @allure.step("Зарегистрировать нового пользователя")
     def post_v1_account(self, registration: Registration, **kwargs):
         """
