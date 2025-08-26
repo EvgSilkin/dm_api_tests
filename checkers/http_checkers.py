@@ -1,14 +1,17 @@
 from contextlib import contextmanager
 
+import allure
 import requests
 from requests.exceptions import HTTPError
 
 
 @contextmanager
 def check_status_code_http(
+
         expected_status_code: requests.codes = requests.codes.OK,
         expected_message: str = None
 ):
+
     try:
         yield
         if expected_status_code != requests.codes.OK:
