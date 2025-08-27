@@ -4,6 +4,9 @@ from pprint import pprint
 import structlog
 import curlify
 from requests import session, JSONDecodeError
+from swagger_coverage_py.listener import CoverageListener
+from swagger_coverage_py.request_schema_handler import RequestSchemaHandler
+from swagger_coverage_py.uri import URI
 
 from restclient.configuratiton import Configuration
 from restclient.utilities import allure_attach
@@ -64,6 +67,12 @@ class RestClient:
         rest_response = self.session.request(method=method, url=full_url, **kwargs)
         curl = curlify.to_curl(rest_response.request)
         pprint(curl)
+
+        # uri = URI(host=self.host, base_path="", unformatted_path=path, uri_params=kwargs.get('params'))
+        # RequestSchemaHandler(
+        #     uri, method.lower(), rest_response, kwargs
+        # ).write_schema()
+
         # Вывод лога ответа
         log.msg(
             event='Response',
