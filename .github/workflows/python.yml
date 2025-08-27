@@ -7,6 +7,7 @@ permissions:
   pages: write
   id-token: write
 
+
 jobs:
   test:
     name: Python tests
@@ -25,7 +26,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest ./tests --alluredir=./allure-results --disable-warnings  # исправлен путь
+          pytest ./tests --alluredir=../allure-results --disable-warnings
         continue-on-error: true
 
       - name: Archive allure results
@@ -40,7 +41,6 @@ jobs:
     needs: test
     name: Generate report
     steps:
-      - uses: actions/checkout@v4  # добавлен checkout
       - uses: actions/setup-java@v3
         with:
           distribution: 'microsoft'
@@ -48,9 +48,6 @@ jobs:
       - run: sudo wget https://github.com/allure-framework/allure2/releases/download/2.29.0/allure-2.29.0.tgz && sudo tar -xvzf allure-2.29.0.tgz -C /opt/ && sudo ln -s /opt/allure-2.29.0/bin/allure /usr/bin/allure
       - name: Download allure results
         uses: actions/download-artifact@v4
-        with:  # добавлены параметры
-          name: allure-results
-          path: allure-results
       - run: allure generate -c allure-results -o _site
       - name: Store report
         uses: actions/upload-artifact@v4
@@ -64,15 +61,11 @@ jobs:
     needs: generate-report
     name: Publish report
     steps:
+      - uses: actions/checkout@v4
       - name: Download site report
         uses: actions/download-artifact@v4
-        with:  # добавлены параметры
-          name: _site
-          path: _site
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v3
-        with:  # добавлен path
-          path: '_site'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

@@ -106,7 +106,6 @@ class AccountHelper:
     def get_activation_token_by_login(self, login):
         token = None
         response = self.mailhog.mailhog_api.get_api_v2_messages()
-        print("\n\n\n", response, "\n\n\n")
         assert response.status_code == 200, f"Письма не были получены {response.json()}"
         for item in response.json().get('items'):
             user_data = loads(item.get('Content').get('Body'))
