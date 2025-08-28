@@ -26,7 +26,8 @@ share/python-wheels/
 *.egg
 MANIFEST
 .idea/
-
+allure-results/
+allure-report/
 swagger-coverage-output/
 swagger-doc-dm-api-account.json
 
