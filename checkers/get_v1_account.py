@@ -49,4 +49,4 @@ class GetV1Account:
             with soft_assertions():
                 assertpy.assert_that(response.resource.login).is_equal_to(login)
                 assertpy.assert_that(response.resource.online).is_instance_of(datetime)
-                assertpy.assert_that(response.resource.roles).contains(UserRole.GUEST, qUserRole.PLAYER)
+                assertpy.assert_that(response.resource.roles).contains(UserRole.GUEST, UserRole.PLAYER)
