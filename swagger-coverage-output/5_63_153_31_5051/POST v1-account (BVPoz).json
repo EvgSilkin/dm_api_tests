@@ -1,0 +1,51 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Recorded Request"
+    },
+    "paths": {
+        "/v1/account": {
+            "post": {
+                "parameters": [
+                    {
+                        "name": "uri_params",
+                        "in": "path",
+                        "required": false,
+                        "x-example": "None"
+                    }
+                ],
+                "responses": {
+                    "400": {}
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "login": {
+                                        "login": "ngtv_test_evg_2025-08-28 21:51:08.453964",
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "password": "12345",
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "email": "evg_2025-08-28 21:51:08.453964@example.com",
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "example": {
+                                "login": "ngtv_test_evg_2025-08-28 21:51:08.453964",
+                                "password": "12345",
+                                "email": "evg_2025-08-28 21:51:08.453964@example.com"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

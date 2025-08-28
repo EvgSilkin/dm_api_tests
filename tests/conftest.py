@@ -51,6 +51,8 @@ def set_config(request):
         v.set(f"{option}", request.config.getoption(f"--{option}"))
     os.environ["TELEGRAM_BOT_CHAT_ID"] = v.get("telegram.chat_id")
     os.environ["TELEGRAM_BOT_ACCESS_TOKEN"] = v.get("telegram.token")
+    request.config.stash['telegram-notifier-addfields']['enviroment'] = config_name
+    request.config.stash['telegram-notifier-addfields']['report'] = "https://evgsilkin.github.io/dm_api_tests/"
 
 
 def pytest_addoption(parser):

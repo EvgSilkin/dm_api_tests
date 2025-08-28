@@ -21,7 +21,8 @@
     "writers": {
         "html": {
             "locale": "en",
-            "filename": "swagger-coverage-dm-api-account.html"
+            "filename": "swagger-coverage-dm-api-account.html",
+            "enable": true
         }
     }
 }
