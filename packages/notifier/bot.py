@@ -13,7 +13,7 @@ v.read_in_config()
 
 def send_file() -> None:
     telegram_bot = TeleBot(v.get("telegram.token"))
-    file_path = Path(__file__).parent.joinpath("../../").joinpath("swagger-doc-dm-api-account.html")
+    file_path = Path(__file__).parent.joinpath("../../").joinpath("swagger-doc-dm-api-account.json")
     with open(file_path, 'rb') as document:
         telegram_bot.send_document(
             v.get("telegram.chat_id"),
