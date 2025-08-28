@@ -5,3 +5,7 @@ service:
 user:
   login: "create_evg_user_56"
   password: "123456789123456789"
+
+telegram:
+  chat_id: -1002979322625
+  token: "8421241047:AAFy9NDHOGzt6h2lQ7OsPZ_udVnVaZi7PDs"

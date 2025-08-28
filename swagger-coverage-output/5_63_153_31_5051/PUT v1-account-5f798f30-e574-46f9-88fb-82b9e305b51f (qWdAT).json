@@ -1,0 +1,23 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Recorded Request"
+    },
+    "paths": {
+        "/v1/account/5f798f30-e574-46f9-88fb-82b9e305b51f": {
+            "put": {
+                "parameters": [
+                    {
+                        "name": "uri_params",
+                        "in": "path",
+                        "required": false,
+                        "x-example": "None"
+                    }
+                ],
+                "responses": {
+                    "200": {}
+                }
+            }
+        }
+    }
+}

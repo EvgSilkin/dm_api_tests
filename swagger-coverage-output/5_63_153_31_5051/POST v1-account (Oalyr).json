@@ -1,0 +1,51 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Recorded Request"
+    },
+    "paths": {
+        "/v1/account": {
+            "post": {
+                "parameters": [
+                    {
+                        "name": "uri_params",
+                        "in": "path",
+                        "required": false,
+                        "x-example": "None"
+                    }
+                ],
+                "responses": {
+                    "201": {}
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "login": {
+                                        "login": "activate_evg_28_08_2025_20_56_33",
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "password": "123456789",
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "email": "activate_evg_28_08_2025_20_56_33@mail.com",
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "example": {
+                                "login": "activate_evg_28_08_2025_20_56_33",
+                                "password": "123456789",
+                                "email": "activate_evg_28_08_2025_20_56_33@mail.com"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
