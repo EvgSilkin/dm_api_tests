@@ -1,3 +1,4 @@
+import os
 from collections import namedtuple
 from datetime import datetime
 from pathlib import Path
@@ -6,11 +7,10 @@ import pytest
 import structlog
 from vyper import v
 from swagger_coverage_py.reporter import CoverageReporter
-from requests.auth import HTTPBasicAuth
 
 from helpers.account_helper import AccountHelper
-from restclient.configuratiton import Configuration as DmApiConfiguration
-from restclient.configuratiton import Configuration as MailhogConfiguration
+from packages.restclient.configuratiton import Configuration as DmApiConfiguration
+from packages.restclient.configuratiton import Configuration as MailhogConfiguration
 from services.dm_api_account import DMApiAccount
 from services.api_mailhog import MailHogApi
 
@@ -24,7 +24,9 @@ options = (
     "service.dm_api_account",
     "service.mailhog",
     "user.login",
-    "user.password"
+    "user.password",
+    "telegram.chat_id",
+    "telegram.token"
 )
 # http://5.63.153.31:5051/swagger/Account/swagger.json?urls.primaryName=Account
 
@@ -40,33 +42,36 @@ def setup_swagger_coverage():
 
 @pytest.fixture(scope="session", autouse=True)
 def set_config(request):
-    config = Path(__file__).joinpath("../../").joinpath("config")
+    config_dir = Path(__file__).parent.parent / "config"
     config_name = request.config.getoption("--env")
     v.set_config_name(config_name)
-    v.add_config_path(config)
+    v.add_config_path(config_dir)
     v.read_in_config()
     for option in options:
         v.set(f"{option}", request.config.getoption(f"--{option}"))
-    yield
+    os.environ["TELEGRAM_BOT_CHAT_ID"] = v.get("telegram.chat_id")
+    os.environ["TELEGRAM_BOT_ACCESS_TOKEN"] = v.get("telegram.token")
+    request.config.stash['telegram-notifier-addfields']['enviroment'] = config_name
+    request.config.stash['telegram-notifier-addfields']['report'] = "https://evgsilkin.github.io/dm_api_tests/"
 
 
 def pytest_addoption(parser):
     parser.addoption("--env", action="store", default="stg", help="run stg")
 
     for option in options:
-        parser.addoption(f"--{option}", action="store", default="None")
+        parser.addoption(f"--{option}", action="store")
 
 
 @pytest.fixture(scope="session")
 def mailhog_api():
-    mailhog_configuration = MailhogConfiguration(host='http://5.63.153.31:5025', disable_log=True)
+    mailhog_configuration = MailhogConfiguration(host=v.get("service.mailhog"), disable_log=False)
     mailhog_client = MailHogApi(configuration=mailhog_configuration)
     return mailhog_client
 
 
 @pytest.fixture(scope="session")
 def account_api():
-    dm_api_configuration = DmApiConfiguration(host='http://5.63.153.31:5051', disable_log=False)
+    dm_api_configuration = DmApiConfiguration(host=v.get("service.dm_api_account"), disable_log=False)
     account = DMApiAccount(configuration=dm_api_configuration)
     return account
 
@@ -79,18 +84,18 @@ def account_helper(account_api, mailhog_api):
 
 @pytest.fixture(scope="session")
 def auth_account_helper(mailhog_api):
-    dm_api_configuration = DmApiConfiguration(host='http://5.63.153.31:5051', disable_log=False)
+    dm_api_configuration = DmApiConfiguration(host=v.get("service.dm_api_account"), disable_log=False)
 
     account = DMApiAccount(configuration=dm_api_configuration)
     account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog_api)
 
-    account_helper.auth_client(login="create_evg_user_56", password="123456789123456789")
+    account_helper.auth_client(login=v.get("user.login"), password=v.get("user.password"))
     return account_helper
 
 
 @pytest.fixture(scope="module")
 def auth_new_account_helper(mailhog_api, prepare_user_scope_session):
-    dm_api_configuration = DmApiConfiguration(host='http://5.63.153.31:5051', disable_log=False)
+    dm_api_configuration = DmApiConfiguration(host=v.get("service.dm_api_account"), disable_log=False)
 
     account = DMApiAccount(configuration=dm_api_configuration)
     account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog_api)

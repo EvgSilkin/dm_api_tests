@@ -3,10 +3,10 @@ from datetime import datetime
 import allure
 import assertpy
 import hamcrest
-from hamcrest import assert_that, has_property, starts_with, equal_to, not_none, has_properties, all_of
-from assertpy import assert_that, soft_assertions
+from hamcrest import has_property, starts_with, equal_to, not_none, has_properties, all_of
+from assertpy import soft_assertions
 
-from dm_api_account.models.response_models.user_details_envelope import UserRole
+from clients.http.dm_api_account.models.response_models.user_details_envelope import UserRole
 
 
 class GetV1Account:

@@ -28,6 +28,8 @@ MANIFEST
 .idea/
 allure-results/
 allure-report/
+swagger-coverage-output/
+swagger-doc-dm-api-account.json
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
